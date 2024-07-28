@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "542148204838",
+    "project_id": "hse-app-4dfec",
+    "storage_bucket": "hse-app-4dfec.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:542148204838:android:881b44fe3ff7e51414c9e7",
+        "android_client_info": {
+          "package_name": "com.example.hse_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYiv6PvZBQ1WuzAqFIqNWuKMg4UUGki5Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
