@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:hse_app/utils/text_styles.dart';
+=======
+import 'package:hse_app/utiles/text_styles.dart';
+>>>>>>> origin/auth
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   CustomAppBar({super.key, this.image1, this.text, this.image2});

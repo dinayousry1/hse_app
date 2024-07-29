@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import 'package:hse_app/utils/text_styles.dart';
 import 'package:flutter/material.dart';
+=======
+import 'package:flutter/material.dart';
+import 'package:hse_app/utiles/text_styles.dart';
+>>>>>>> origin/auth
 
 class CustomTextFormField extends StatelessWidget {
   const CustomTextFormField({
@@ -60,6 +65,10 @@ class CustomTextFormField extends StatelessWidget {
             width: 1.0,
           ),
         ),
+<<<<<<< HEAD
+=======
+        // errorStyle: TextStyle(height: 0), // Set error text height to zero
+>>>>>>> origin/auth
       ),
       validator: validator,
     );
