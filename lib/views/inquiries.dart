@@ -40,16 +40,21 @@ class _InquiriesState extends State<Inquiries> {
   }
 
   Future<void> addInquiries() async {
+    print("1");
     if (_formKey.currentState!.validate()) {
       String? imageUrl;
+      print("2");
       if (_image != null) {
+        print("3");
         final storageRef = FirebaseStorage.instance.ref();
         final imageRef =
             storageRef.child('inquiries/${_image!.path.split('/').last}');
         final uploadTask = await imageRef.putFile(_image!);
+        print("4");
         imageUrl = await uploadTask.ref.getDownloadURL();
+        print("5");
       }
-
+      print("6");
       DocumentReference response = await Inquiries.add({
         "Name": _nameController.text,
         "Phone": _phoneController.text,
@@ -57,13 +62,16 @@ class _InquiriesState extends State<Inquiries> {
         "Inquiry Type": inquiryType,
         "Image URL": imageUrl,
       });
-
+      print("7");
       showDialog(
         context: context,
         builder: (context) {
           return SuccssfulSend();
         },
       );
+      print("8");
+    } else {
+      print("222222");
     }
   }
 
