@@ -4,8 +4,15 @@ class CustomFooter extends StatelessWidget {
   const CustomFooter({
     super.key,
     required this.num,
+<<<<<<< HEAD
   });
   final double num;
+=======
+    required this.num2,
+  });
+  final double num;
+  final double num2;
+>>>>>>> origin/aboutus
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +38,11 @@ class CustomFooter extends StatelessWidget {
                 child: Image.asset(
                   'assets/Qara_Logo.png',
                   width: num,
+<<<<<<< HEAD
                   height: 16,
+=======
+                  height: num2,
+>>>>>>> origin/aboutus
                   fit: BoxFit.scaleDown,
                 ),
               )
