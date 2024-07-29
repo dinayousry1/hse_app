@@ -1,10 +1,7 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-import 'package:hse_app/utils/text_styles.dart';
-=======
+
 import 'package:hse_app/utiles/text_styles.dart';
->>>>>>> origin/auth
 
 class CustomPhoneItem extends StatelessWidget {
   const CustomPhoneItem({
@@ -23,11 +20,8 @@ class CustomPhoneItem extends StatelessWidget {
           child: TextFormField(
             controller: _phonecontroller,
             keyboardType: TextInputType.phone,
-<<<<<<< HEAD
             textDirection: TextDirection.rtl,
-=======
-            // textDirection: TextDirection.rtl,
->>>>>>> origin/auth
+
             style: const TextStyle(
               fontFamily: 'Tajawal',
               fontSize: 16,
@@ -75,34 +69,13 @@ class CustomPhoneItem extends StatelessWidget {
               if (number == null || number.isEmpty) {
                 return 'برجاء ادخال رقم الجوال';
               }
-<<<<<<< HEAD
-              if (number.length != 10) {
-                return 'رقم الجوال يجب أن يكون 10 أرقام';
-=======
-              if (number.length != 13) {
+
+              if (number.length != 11) {
                 return 'رقم الجوال يجب أن يكون 13 أرقام';
->>>>>>> origin/auth
               }
               return null;
             },
           ),
-<<<<<<< HEAD
-=======
-
-          // CustomTextFormField(
-          //   controller: _phonecontroller,
-          //   text: 'إكتب رقم جوالك',
-          // validator: (number) {
-          //   if (number == null || number.isEmpty) {
-          //     return 'برجاء ادخال رقم الجوال';
-          //   }
-          //   if (number.length != 10) {
-          //     return 'رقم الجوال يجب أن يكون 10 أرقام';
-          //   }
-          //   return null;
-          // },
-          // ),
->>>>>>> origin/auth
         ),
         const SizedBox(width: 8),
         Container(

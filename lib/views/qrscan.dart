@@ -42,7 +42,7 @@ class _QRViewExampleState extends State<QRViewExample> {
           Expanded(flex: 13, child: _buildQrView(context)),
           const Expanded(
             child: Stack(
-              children: [CustomFooter(num: 50)],
+              children: [CustomFooter(num: 50,num2: 16,)],
             ),
           )
         ],

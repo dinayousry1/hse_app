@@ -55,8 +55,6 @@ abstract class TextStyles {
       fontFamily: 'Tajawal',
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal);
-<<<<<<< HEAD
-=======
   static const TextStyle styleNormalgrey16 = TextStyle(
       color: Color.fromRGBO(140, 140, 140, 1),
       fontSize: 16,
@@ -64,7 +62,6 @@ abstract class TextStyles {
       fontFamily: 'Tajawal',
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal);
->>>>>>> origin/aboutus
   static const TextStyle styleNormalRed16 = TextStyle(
       color: Color.fromRGBO(255, 0, 0, 1),
       fontSize: 16,
@@ -84,8 +81,6 @@ abstract class TextStyles {
       fontFamily: 'Tajawal',
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal);
-<<<<<<< HEAD
-=======
   static const TextStyle styleNormalgray14 = TextStyle(
       // background: rgba(179, 179, 179, 1);
       color: Color.fromRGBO(179, 179, 179, 1),
@@ -93,7 +88,6 @@ abstract class TextStyles {
       fontFamily: 'Tajawal',
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal);
->>>>>>> origin/aboutus
   static const TextStyle styleNormal12 = TextStyle(
       color: Colors.black,
       fontSize: 12,

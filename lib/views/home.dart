@@ -112,7 +112,7 @@ class HomeView extends StatelessWidget {
             ],
           ),
           CustomFooter(
-            num: 40,
+            num: 40, num2: 16,
           ),
         ],
       ),
