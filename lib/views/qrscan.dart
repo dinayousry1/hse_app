@@ -1,15 +1,18 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hse_app/bloc/cubit/scan_cubit.dart';
+import 'package:hse_app/bloc/cubit/scan_state.dart';
+import 'package:hse_app/service.dart';
 import 'package:hse_app/widgets/custom_appbar.dart';
 import 'package:hse_app/widgets/custom_footer.dart';
 import 'package:hse_app/widgets/not_orignal_product.dart';
 import 'package:hse_app/widgets/orignal_product.dart';
-
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class QRViewExample extends StatefulWidget {
-  const QRViewExample({Key? key}) : super(key: key);
+  const QRViewExample({key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _QRViewExampleState();
@@ -31,23 +34,51 @@ class _QRViewExampleState extends State<QRViewExample> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        image1: 'assets/Menu.png',
-        text: 'توثيق منتج',
-        image2: 'assets/HSE  LOGO.png',
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(flex: 13, child: _buildQrView(context)),
-          const Expanded(
-            child: Stack(
-              children: [CustomFooter(num: 50,num2: 16,)],
+    return BlocProvider(
+      create: (context) => ScanCubit(Services()),
+      child: Scaffold(
+        appBar: CustomAppBar(
+          widgett: Container(
+            width: 40,
+            height: 40,
+            decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+                color: Color.fromRGBO(255, 186, 0, 1),
+                boxShadow: [
+                  BoxShadow(
+                      color: Color.fromRGBO(255, 186, 0, 0.24),
+                      offset: Offset(0, 4),
+                      blurRadius: 8,
+                      spreadRadius: 4),
+                ]),
+            child: const Icon(
+              Icons.keyboard_arrow_right_sharp,
+              size: 30,
             ),
-          )
-        ],
+          ),
+          text: 'توثيق منتج',
+          image2: 'assets/hse.png',
+        ),
+        body: Column(
+          children: <Widget>[
+            Expanded(flex: 12, child: _buildQrView(context)),
+            const Expanded(
+              child: Stack(
+                children: [
+                  CustomFooter(
+                    num: 60,
+                    num2: 24,
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
+    // );
   }
 
   Widget _buildQrView(BuildContext context) {
@@ -76,47 +107,41 @@ class _QRViewExampleState extends State<QRViewExample> {
       setState(() {
         result = scanData;
       });
+      controller.pauseCamera();
       _showResultDialog(context, result!.code);
     });
   }
 
-  // void _showResultDialog(BuildContext context, String? code) {
-  //   String message = code == 'original'
-  //       ? 'The product is original.'
-  //       : 'The product is not original.';
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) => AlertDialog(
-  //       title: const Text('Scan Result'),
-  //       content: Text(message),
-  //       actions: [
-  //         TextButton(
-  //           onPressed: () {
-  //             Navigator.of(context).pop();
-  //             controller?.resumeCamera();
-  //           },
-  //           child: const Text('OK'),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
   void _showResultDialog(BuildContext context, String? code) {
-    if (code == 'original') {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return const OrignalProduct();
-        },
-      );
-    } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return const NotOrignalProduct();
-        },
-      );
-    }
+    showDialog(
+      context: context,
+      builder: (context) {
+        return BlocProvider(
+          create: (context) => ScanCubit(Services()),
+          child: Builder(
+            builder: (context) {
+              context.read<ScanCubit>().scanQRCode(code!);
+              return BlocBuilder<ScanCubit, ScanState>(
+                builder: (context, state) {
+                  if (state is ScanLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is ScanSuccess) {
+                    return OrignalProduct(
+                      controller: controller,
+                      product: state.product,
+                    );
+                  } else if (state is ScanFailure) {
+                    return NotOriginalProduct(controller: controller);
+                  } else {
+                    return const Center(child: Text('Unexpected state'));
+                  }
+                },
+              );
+            },
+          ),
+        );
+      },
+    );
   }
 
   void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {

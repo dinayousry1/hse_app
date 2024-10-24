@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:hse_app/utils/text_styles.dart';
+import 'package:hse_app/product.dart';
+import 'package:hse_app/utiles/text_styles.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class OrignalProduct extends StatelessWidget {
+  final QRViewController? controller;
+  final Product product;
+
   const OrignalProduct({
     super.key,
+    this.controller,
+    required this.product,
   });
 
   @override
@@ -11,11 +18,11 @@ class OrignalProduct extends StatelessWidget {
     return Dialog(
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(18), topRight: Radius.circular(18)),
+            topLeft: Radius.circular(20), topRight: Radius.circular(20)),
       ),
       child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.8,
-        height: MediaQuery.of(context).size.height * 0.45,
+        width: 400,
+        height: 335,
         child: Column(
           children: [
             const SizedBox(
@@ -32,6 +39,7 @@ class OrignalProduct extends StatelessWidget {
               height: 15,
             ),
             Image.asset(
+              // product.image ??
               'assets/orignal_product.png',
               width: 190,
               height: 190,
@@ -67,7 +75,7 @@ class OrignalProduct extends StatelessWidget {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return const ProductDetails();
+                            return ProductDetails(product: product);
                           },
                         );
                       },
@@ -102,9 +110,10 @@ class OrignalProduct extends StatelessWidget {
                     child: TextButton(
                       onPressed: () {
                         Navigator.pop(context);
+                        controller?.resumeCamera();
                       },
                       style: TextButton.styleFrom(
-                        minimumSize: const Size(130, 40),
+                        minimumSize: const Size(120, 40),
                         padding: EdgeInsets.zero,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -126,23 +135,23 @@ class OrignalProduct extends StatelessWidget {
 }
 
 class ProductDetails extends StatelessWidget {
-  const ProductDetails({super.key});
+  final Product product;
+
+  const ProductDetails({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(18), topRight: Radius.circular(18)),
+            topLeft: Radius.circular(20), topRight: Radius.circular(20)),
       ),
       child: SizedBox(
         width: MediaQuery.of(context).size.width * 0.8,
-        height: MediaQuery.of(context).size.height * 0.68,
+        height: MediaQuery.of(context).size.height * 0.7,
         child: Column(
           children: [
-            const SizedBox(
-              height: 5,
-            ),
+            const SizedBox(height: 5),
             Container(
               width: 96,
               height: 5,
@@ -150,107 +159,68 @@ class ProductDetails extends StatelessWidget {
                   color: Color.fromRGBO(251, 186, 0, 1),
                   borderRadius: BorderRadius.all(Radius.circular(3))),
             ),
-            const SizedBox(
-              height: 15,
-            ),
-            Image.asset(
-              'assets/orignal_product.png',
+            const SizedBox(height: 15),
+            Image.network(
+              product.image ?? 'assets/orignal_product.png',
               width: 190,
               height: 190,
               fit: BoxFit.scaleDown,
             ),
-            const SizedBox(
-              height: 5,
-            ),
-            const Text(
+            const SizedBox(height: 5),
+            Text(
               'منتج أصلى',
               style: TextStyles.stylethinWhite18,
             ),
-            const SizedBox(
-              height: 8,
-            ),
+            const SizedBox(height: 8),
             const Divider(
               thickness: 1.5,
               color: Color.fromRGBO(236, 236, 236, 1),
               indent: 12,
               endIndent: 12,
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            const Text(
-              'كابل السويدى',
+            const SizedBox(height: 10),
+            Text(
+              product.name ?? 'كابل السويدى',
               style: TextStyles.styleBoldBlack18,
             ),
-            const SizedBox(
-              height: 16,
-            ),
+            const SizedBox(height: 16),
             Image.asset(
               'assets/copper-wire 2.png',
               width: 64,
               height: 64,
               fit: BoxFit.scaleDown,
             ),
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.12,
               width: MediaQuery.of(context).size.width * 0.7,
               child: Column(
-                children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.04,
-                    color: const Color.fromRGBO(236, 236, 236, 1),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          ' 10 AWG',
-                          style: TextStyles.styleNormal14,
+                children: product.values!
+                    .map(
+                      (attr) => Container(
+                        height: MediaQuery.of(context).size.height * 0.04,
+                        color: product.values!.indexOf(attr) % 2 == 0
+                            ? const Color.fromRGBO(236, 236, 236, 1)
+                            : Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8, right: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                attr.value?.name ?? '',
+                                style: TextStyles.styleNormal16_500,
+                              ),
+                              Text(
+                                attr.key?.name ?? '',
+                                style: TextStyles.styleNormal14,
+                              ),
+                            ],
+                          ),
                         ),
-                        Text(
-                          ' المقاس ',
-                          style: TextStyles.styleNormal14,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.04,
-                    color: Colors.white,
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          ' 250 FT',
-                          style: TextStyles.styleNormal14,
-                        ),
-                        Text(
-                          ' الطول ',
-                          style: TextStyles.styleNormal14,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.04,
-                    color: const Color.fromRGBO(236, 236, 236, 1),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          ' اسود',
-                          style: TextStyles.styleNormal16_500,
-                        ),
-                        Text(
-                          ' اللون ',
-                          style: TextStyles.styleNormal14,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                      ),
+                    )
+                    .toList(),
               ),
             ),
           ],
@@ -259,3 +229,104 @@ class ProductDetails extends StatelessWidget {
     );
   }
 }
+
+// class ProductDetails extends StatelessWidget {
+//   final Product product;
+
+//   const ProductDetails({super.key, required this.product});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     // Assuming product.name is a string like "14awg/500ft/red"
+//     final attributes = product.name?.split('/') ?? [];
+//     final attributeLabels = ['المقاس', 'الطول', 'اللون'];
+
+//     return Dialog(
+//       shape: const RoundedRectangleBorder(
+//         borderRadius: BorderRadius.only(
+//             topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+//       ),
+//       child: SizedBox(
+//         width: MediaQuery.of(context).size.width * 0.8,
+//         height: MediaQuery.of(context).size.height * 0.7,
+//         child: Column(
+//           children: [
+//             const SizedBox(height: 5),
+//             Container(
+//               width: 96,
+//               height: 5,
+//               decoration: const BoxDecoration(
+//                   color: Color.fromRGBO(251, 186, 0, 1),
+//                   borderRadius: BorderRadius.all(Radius.circular(3))),
+//             ),
+//             const SizedBox(height: 15),
+//             Image.network(
+//               product.image ?? 'assets/orignal_product.png',
+//               width: 190,
+//               height: 190,
+//               fit: BoxFit.scaleDown,
+//             ),
+//             const SizedBox(height: 5),
+//             Text(
+//               'منتج أصلى',
+//               style: TextStyles.stylethinWhite18,
+//             ),
+//             const SizedBox(height: 8),
+//             const Divider(
+//               thickness: 1.5,
+//               color: Color.fromRGBO(236, 236, 236, 1),
+//               indent: 12,
+//               endIndent: 12,
+//             ),
+//             const SizedBox(height: 10),
+//             Text(
+//               product.name ?? 'كابل السويدى',
+//               style: TextStyles.styleBoldBlack18,
+//             ),
+//             const SizedBox(height: 16),
+//             Image.asset(
+//               'assets/copper-wire 2.png',
+//               width: 64,
+//               height: 64,
+//               fit: BoxFit.scaleDown,
+//             ),
+//             const SizedBox(height: 20),
+//             SizedBox(
+//               height: MediaQuery.of(context).size.height * 0.12,
+//               width: MediaQuery.of(context).size.width * 0.7,
+//               child: Column(
+//                 children: List.generate(
+//                   attributes.length,
+//                   (index) {
+//                     return Container(
+//                       height: MediaQuery.of(context).size.height * 0.04,
+//                       color: index % 2 == 0
+//                           ? const Color.fromRGBO(236, 236, 236, 1)
+//                           : Colors.white,
+//                       child: Padding(
+//                         padding: const EdgeInsets.only(left: 8, right: 8),
+//                         child: Row(
+//                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                           children: [
+//                             Text(
+//                               attributes[index],
+//                               style: TextStyles.styleNormal16_500,
+//                             ),
+//                             Text(
+//                               attributeLabels[index],
+//                               style: TextStyles.styleNormal14,
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     );
+//                   },
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

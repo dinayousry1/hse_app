@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:hse_app/utils/text_styles.dart';
-
+import 'package:hse_app/utiles/text_styles.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  CustomAppBar({super.key, this.image1, this.text, this.image2});
+  CustomAppBar({super.key, this.text, this.image2, this.widgett});
 
-  final String? image1;
   final String? text;
   final String? image2;
+  final Widget? widgett;
 
   @override
   Widget build(BuildContext context) {
@@ -15,19 +14,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.transparent,
       elevation: 0,
       actions: [
-        if (image1 != null)
+        if (widgett != null)
           Transform.translate(
-            offset: const Offset(-7, -0),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Image.asset(
-                image1!,
-                width: 50,
-                height: 50,
-                fit: BoxFit.scaleDown,
-              ),
+            offset: const Offset(-10, -0),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8, bottom: 8),
+              child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: widgett),
             ),
           ),
       ],
@@ -39,11 +35,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               text!,
               style: TextStyles.styleNormal20,
             ),
+          const SizedBox(
+            width: 4,
+          )
         ],
       ),
       leading: image2 != null
-          ? Transform.translate(
-              offset: const Offset(4, 0),
+          ? Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 0, 12),
               child: Image.asset(
                 image2!,
                 width: 40,

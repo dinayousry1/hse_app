@@ -20,12 +20,17 @@ class _SignupState extends State<Signup> {
   final TextEditingController InviteController = TextEditingController();
   String? governorate;
   String? neighborhood;
+  bool _isLoading = false;
   CollectionReference Users = FirebaseFirestore.instance.collection('Users');
+  String _selectedCountryCode = '+966';
 
   Future<void> signup() async {
     if (_formKey.currentState!.validate()) {
       try {
-        int phoneNumber = int.parse(controller.text);
+        setState(() {
+          _isLoading = true;
+        });
+        String phoneNumber = _selectedCountryCode + controller.text.trim();
         await Users.add({
           "First Name": firstcontroller.text,
           "Secound Name": secoundnamecontroller.text,
@@ -34,11 +39,14 @@ class _SignupState extends State<Signup> {
           "Neighborhood": neighborhood,
           "Governorate": governorate,
         });
+        setState(() {
+          _isLoading = false;
+        });
 
         await showDialog(
           context: context,
           builder: (context) {
-            return SuccssfulSend(
+            return const SuccssfulSendd(
               text: 'تم انشاء الحساب بنجاح',
             );
           },
@@ -50,38 +58,6 @@ class _SignupState extends State<Signup> {
         print('Error adding document: $e');
       }
     }
-  }
-
-  List<int> phoneNumbers = [];
-
-  Future<void> fetchPhoneNumbers() async {
-    try {
-      QuerySnapshot querySnapshot = await Users.get();
-      setState(() {
-        phoneNumbers =
-            querySnapshot.docs.map((doc) => doc['Phone'] as int).toList();
-      });
-      print('Phone Numbers: $phoneNumbers');
-    } catch (e) {
-      print('Error fetching phone numbers: $e');
-    }
-  }
-
-  String? validatePhoneNumber(String? number) {
-    if (number == null || number.isEmpty) {
-      return 'برجاء ادخال رقم الجوال';
-    }
-    if (number.length != 13) {
-      return 'رقم الجوال يجب أن يكون 13 أرقام';
-    }
-    int? phoneNumber = int.tryParse(number);
-    if (phoneNumber == null) {
-      return 'برجاء إدخال رقم صالح';
-    }
-    if (phoneNumbers.contains(phoneNumber)) {
-      return 'هزا الرقم مستخدم من قبل';
-    }
-    return null;
   }
 
   @override
@@ -98,9 +74,28 @@ class _SignupState extends State<Signup> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        image1: 'assets/Menu.png',
+        widgett: Container(
+          width: 40,
+          height: 40,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
+              ),
+              color: Color.fromRGBO(255, 186, 0, 1),
+              boxShadow: [
+                BoxShadow(
+                    color: Color.fromRGBO(255, 186, 0, 0.24),
+                    offset: Offset(0, 4),
+                    blurRadius: 8,
+                    spreadRadius: 4),
+              ]),
+          child: const Icon(
+            Icons.keyboard_arrow_right_sharp,
+            size: 30,
+          ),
+        ),
         text: 'إنشاء حساب',
-        image2: 'assets/HSE  LOGO.png',
+        image2: 'assets/hse.png',
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -128,7 +123,7 @@ class _SignupState extends State<Signup> {
                           ),
                           const SizedBox(height: 8),
                           CustomTextFormField(
-                              controller: firstcontroller,
+                              controller: secoundnamecontroller,
                               text: 'الإسم الأخير',
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -153,7 +148,7 @@ class _SignupState extends State<Signup> {
                           ),
                           const SizedBox(height: 8),
                           CustomTextFormField(
-                              controller: secoundnamecontroller,
+                              controller: firstcontroller,
                               text: 'الإسم الأول',
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -169,7 +164,7 @@ class _SignupState extends State<Signup> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.03,
                 ),
-                Align(
+                const Align(
                   alignment: Alignment.centerRight,
                   child: Text(
                     'رقم الموبايل',
@@ -233,22 +228,16 @@ class _SignupState extends State<Signup> {
                             ),
                           ),
                         ),
-                        validator: validatePhoneNumber,
+                        validator: (number) {
+                          if (number == null || number.isEmpty) {
+                            return 'برجاء ادخال رقم الجوال';
+                          }
+                          if (number.length < 9 || number.length > 10) {
+                            return 'رقم الجوال يجب أن يكون 9 أو 10 أرقام';
+                          }
+                          return null;
+                        },
                       ),
-
-                      // CustomTextFormField(
-                      //   controller: _phonecontroller,
-                      //   text: 'إكتب رقم جوالك',
-                      // validator: (number) {
-                      //   if (number == null || number.isEmpty) {
-                      //     return 'برجاء ادخال رقم الجوال';
-                      //   }
-                      //   if (number.length != 10) {
-                      //     return 'رقم الجوال يجب أن يكون 10 أرقام';
-                      //   }
-                      //   return null;
-                      // },
-                      // ),
                     ),
                     const SizedBox(width: 8),
                     Container(
@@ -257,10 +246,14 @@ class _SignupState extends State<Signup> {
                       decoration: const BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(12)),
                           color: Color.fromRGBO(245, 245, 245, 1)),
-                      child: const FittedBox(
+                      child: FittedBox(
                         fit: BoxFit.cover,
                         child: CountryCodePicker(
-                          onChanged: print,
+                          onChanged: (country) {
+                            setState(() {
+                              _selectedCountryCode = country.dialCode!;
+                            });
+                          },
                           initialSelection: 'SA',
                           favorite: ['+966', 'SA'],
                           showCountryOnly: false,
@@ -274,7 +267,7 @@ class _SignupState extends State<Signup> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.03,
                 ),
-                Align(
+                const Align(
                   alignment: Alignment.centerRight,
                   child: Text(
                     'المحافظة',
@@ -337,7 +330,7 @@ class _SignupState extends State<Signup> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.03,
                 ),
-                Align(
+                const Align(
                   alignment: Alignment.centerRight,
                   child: Text(
                     'الحى (إختيارى)',
@@ -394,7 +387,7 @@ class _SignupState extends State<Signup> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.03,
                 ),
-                Align(
+                const Align(
                   alignment: Alignment.centerRight,
                   child: Text(
                     'كود الدعوة (إختيارى)',
@@ -424,27 +417,28 @@ class _SignupState extends State<Signup> {
                           spreadRadius: 4,
                           color: Color.fromRGBO(255, 186, 0, 0.24))
                     ]),
-                    child: MaterialButton(
-                      elevation: 1,
-                      onPressed: () {
-                        signup();
-                        fetchPhoneNumbers();
-                      },
-                      color: const Color.fromRGBO(255, 186, 0, 1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'ارسل',
-                          style: TextStyle(
-                              fontFamily: 'Tajawal',
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white),
-                        ),
-                      ),
-                    ),
+                    child: _isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : MaterialButton(
+                            elevation: 1,
+                            onPressed: () {
+                              signup();
+                            },
+                            color: const Color.fromRGBO(255, 186, 0, 1),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                'ارسل',
+                                style: TextStyle(
+                                    fontFamily: 'Tajawal',
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white),
+                              ),
+                            ),
+                          ),
                   ),
                 ),
                 SizedBox(
@@ -454,7 +448,13 @@ class _SignupState extends State<Signup> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) {
+                            return Login();
+                          }),
+                        );
+                      },
                       child: const Text(
                         'تسجيل الدخول',
                         style: TextStyle(

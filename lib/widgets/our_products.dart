@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hse_app/utils/text_styles.dart';
+import 'package:hse_app/utiles/text_styles.dart';
 import 'package:hse_app/widgets/product_item.dart';
 
 class OurProducts extends StatelessWidget {

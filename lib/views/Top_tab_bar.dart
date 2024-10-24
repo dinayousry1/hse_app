@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hse_app/utils/text_styles.dart';
+import 'package:hse_app/utiles/text_styles.dart';
 import 'package:hse_app/widgets/about_company.dart';
 import 'package:hse_app/widgets/custom_appbar.dart';
 import 'package:hse_app/widgets/custom_footer.dart';
@@ -12,12 +12,32 @@ class TopTabbarr extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3, // Number of tabs
+      length: 3,
+      initialIndex: 2,
       child: Scaffold(
         backgroundColor: Colors.white,
         extendBodyBehindAppBar: true,
         appBar: CustomAppBar(
-          image1: 'assets/Menu.png',
+          widgett: Container(
+            width: 40,
+            height: 40,
+            decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+                color: Color.fromRGBO(255, 186, 0, 1),
+                boxShadow: [
+                  BoxShadow(
+                      color: Color.fromRGBO(255, 186, 0, 0.24),
+                      offset: Offset(0, 4),
+                      blurRadius: 8,
+                      spreadRadius: 4),
+                ]),
+            child: const Icon(
+              Icons.keyboard_arrow_right_sharp,
+              size: 30,
+            ),
+          ),
         ),
         body: Stack(
           children: [
@@ -42,10 +62,10 @@ class TopTabbarr extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: 150,
+              top: 160,
               child: Container(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height - 150,
+                height: MediaQuery.of(context).size.height - 160,
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
@@ -106,7 +126,7 @@ class TopTabbarr extends StatelessWidget {
               ),
             ),
             const CustomFooter(
-              num: 78,
+              num: 50,
               num2: 24,
             ),
           ],

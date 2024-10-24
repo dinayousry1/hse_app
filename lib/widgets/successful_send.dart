@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hse_app/utiles/text_styles.dart';
 
-class SuccssfulSend extends StatelessWidget {
-  const SuccssfulSend({
+class SuccssfulSendd extends StatelessWidget {
+  const SuccssfulSendd({
     super.key,
     required this.text,
   });
@@ -19,7 +19,7 @@ class SuccssfulSend extends StatelessWidget {
       ),
       child: Container(
         width: MediaQuery.of(context).size.width * 0.5,
-        height: MediaQuery.of(context).size.height * 0.25,
+        height: MediaQuery.of(context).size.height * 0.32,
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
@@ -28,17 +28,20 @@ class SuccssfulSend extends StatelessWidget {
           ),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            SizedBox(
+                width: 190,
+                height: 190,
+                child: Image.asset('assets/checkout.gif')),
             Align(
               alignment: Alignment.bottomCenter,
               child: Text(
                 text,
-                // 'تم الإرسال بنجاح',
                 style: TextStyles.styleNormal16_500,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
           ],

@@ -1,6 +1,5 @@
-import 'package:hse_app/utils/text_styles.dart';
 import 'package:flutter/material.dart';
-
+import 'package:hse_app/utiles/text_styles.dart';
 
 class CustomTextFormField extends StatelessWidget {
   const CustomTextFormField({

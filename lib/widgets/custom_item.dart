@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:hse_app/utils/text_styles.dart';
+import 'package:hse_app/utiles/text_styles.dart';
 
 class CustomItem extends StatelessWidget {
   const CustomItem({
     super.key,
     required this.text1,
     required this.text2,
+    required this.onTap,
   });
   final String text1;
   final String text2;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: onTap,
       child: Container(
         width: 104,
         height: 104,

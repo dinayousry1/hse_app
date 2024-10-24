@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hse_app/utils/text_styles.dart';
+import 'package:hse_app/utiles/text_styles.dart';
+import 'package:hse_app/views/Top_tab_bar.dart';
+import 'package:hse_app/views/connect_us.dart';
 import 'package:hse_app/views/qrscan.dart';
 import 'package:hse_app/widgets/custom_appbar.dart';
 import 'package:hse_app/widgets/banner_listview.dart';
@@ -16,7 +18,7 @@ class HomeView extends StatelessWidget {
       extendBodyBehindAppBar: true,
       appBar: CustomAppBar(
         text: 'الرئيسية',
-        image2: 'assets/HSE  LOGO.png',
+        image2: 'assets/hse.png',
       ),
       body: Stack(
         children: [
@@ -47,7 +49,7 @@ class HomeView extends StatelessWidget {
                     SingleChildScrollView(
                       child: Column(
                         children: [
-                          const SizedBox(height: 80),
+                          const SizedBox(height: 90),
                           const BannerListview(),
                           const SizedBox(height: 60),
                           const Padding(
@@ -59,17 +61,29 @@ class HomeView extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          const Row(
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               CustomItem(
                                 text1: 'assets/phone.png',
                                 text2: 'تواصل معنا',
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                      MaterialPageRoute(builder: (context) {
+                                    return const ConnectUs();
+                                  }));
+                                },
                               ),
-                              SizedBox(width: 20),
+                              const SizedBox(width: 20),
                               CustomItem(
                                 text1: 'assets/Frame 2.png',
                                 text2: 'من نحن',
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                      MaterialPageRoute(builder: (context) {
+                                    return const TopTabbarr();
+                                  }));
+                                },
                               ),
                             ],
                           ),
@@ -84,14 +98,19 @@ class HomeView extends StatelessWidget {
                           ),
                           const SizedBox(height: 10),
                           SizedBox(
-                            width: 90,
-                            height: 90,
+                            width: 85,
+                            height: 85,
                             child: FloatingActionButton(
                               elevation: 0,
                               onPressed: () {
                                 Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => const QRViewExample(),
                                 ));
+                                // BlocProvider(
+                                //   create: (context) =>
+                                //       ScanCubit(ScanRepository(Services())),
+                                //   child: ScanScreen(),
+                                // );
                               },
                               backgroundColor:
                                   const Color.fromRGBO(255, 186, 0, 1),
@@ -103,6 +122,7 @@ class HomeView extends StatelessWidget {
                               ),
                             ),
                           ),
+                          const SizedBox(height: 70),
                         ],
                       ),
                     ),
@@ -111,8 +131,9 @@ class HomeView extends StatelessWidget {
               ),
             ],
           ),
-          CustomFooter(
-            num: 40, num2: 16,
+          const CustomFooter(
+            num: 40,
+            num2: 16,
           ),
         ],
       ),

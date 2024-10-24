@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hse_app/views/inquiries.dart';
+import 'package:hse_app/views/login.dart';
 import 'package:hse_app/widgets/custom_appbar.dart';
 import 'package:hse_app/widgets/custom_footer.dart';
 
@@ -11,16 +13,35 @@ class ConnectUs extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        image1: 'assets/Menu.png',
+        widgett: Container(
+          width: 40,
+          height: 40,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
+              ),
+              color: Color.fromRGBO(255, 186, 0, 1),
+              boxShadow: [
+                BoxShadow(
+                    color: Color.fromRGBO(255, 186, 0, 0.24),
+                    offset: Offset(0, 4),
+                    blurRadius: 8,
+                    spreadRadius: 4),
+              ]),
+          child: const Icon(
+            Icons.keyboard_arrow_right_sharp,
+            size: 30,
+          ),
+        ),
         text: 'تواصل معنا',
-        image2: 'assets/HSE  LOGO.png',
+        image2: 'assets/hse.png',
       ),
       body: Stack(
         children: [
           GestureDetector(
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                return Inquiries();
+                return const Inquiries();
               }));
             },
             child: Padding(
@@ -29,7 +50,7 @@ class ConnectUs extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   const SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
                   Image.asset(
                     'assets/Contact us 1.png',
@@ -38,7 +59,7 @@ class ConnectUs extends StatelessWidget {
                     fit: BoxFit.scaleDown,
                   ),
                   const SizedBox(
-                    height: 50,
+                    height: 40,
                   ),
                   Container(
                     width: 358,
@@ -109,6 +130,22 @@ class ConnectUs extends StatelessWidget {
                       ],
                     ),
                   ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: InkWell(
+                        onTap: () async {
+                          await FirebaseAuth.instance.signOut();
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return Login();
+                          }));
+                        },
+                        child: const Icon(Icons.logout),
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),

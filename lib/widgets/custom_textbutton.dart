@@ -24,11 +24,6 @@ class CustomTextButton extends StatelessWidget {
                 borderRadius: BorderRadius.all(
               Radius.circular(12),
             )),
-            // side:
-            // const BorderSide(
-            //   color: Color(0xFFFEF1CC),
-            //   width: 1,
-            // ),
           ),
           child: widget
           //

@@ -1,9 +1,10 @@
 import 'dart:io';
+import 'package:country_code_picker/country_code_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hse_app/utils/text_styles.dart';
+import 'package:hse_app/utiles/text_styles.dart';
 import 'package:hse_app/widgets/custom_appbar.dart';
 import 'package:hse_app/widgets/custom_footer.dart';
-import 'package:hse_app/widgets/custom_phone_item.dart';
 import 'package:hse_app/widgets/custom_textbutton.dart';
 import 'package:hse_app/widgets/custom_textformfield.dart';
 import 'package:hse_app/widgets/succsessful_send.dart';
@@ -24,54 +25,61 @@ class _InquiriesState extends State<Inquiries> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _detailsController = TextEditingController();
   String? inquiryType;
-  File? _image;
-  String? _imageUrl;
-  CollectionReference Inquiries =
+  List<File>? _images;
+  String _selectedCountryCode = '+966';
+  bool _isLoading = false;
+  CollectionReference inquiries =
       FirebaseFirestore.instance.collection('Inquiries');
 
-  Future<void> _pickImage() async {
+  Future<void> _pickImages() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
+    final List<XFile>? images = await picker.pickMultiImage();
+
+    if (images != null && images.isNotEmpty) {
       setState(() {
-        _image = File(image.path);
+        // _imageUrls = [];
+        _images = images.map((image) => File(image.path)).toList();
       });
     }
   }
 
   Future<void> addInquiries() async {
-    print("1");
     if (_formKey.currentState!.validate()) {
-      String? imageUrl;
-      print("2");
-      if (_image != null) {
-        print("3");
-        final storageRef = FirebaseStorage.instance.ref();
-        final imageRef =
-            storageRef.child('inquiries/${_image!.path.split('/').last}');
-        final uploadTask = await imageRef.putFile(_image!);
-        print("4");
-        imageUrl = await uploadTask.ref.getDownloadURL();
-        print("5");
+      setState(() {
+        _isLoading = true;
+      });
+
+      List<String> imageUrls = [];
+      if (_images != null) {
+        for (File image in _images!) {
+          final storageRef = FirebaseStorage.instance.ref();
+          final imageRef =
+              storageRef.child('inquiries/${image.path.split('/').last}');
+          final uploadTask = await imageRef.putFile(image);
+          final url = await uploadTask.ref.getDownloadURL();
+          imageUrls.add(url);
+        }
       }
-      print("6");
-      DocumentReference response = await Inquiries.add({
+      String phoneNumber = _selectedCountryCode + _phoneController.text.trim();
+      await inquiries.add({
         "Name": _nameController.text,
-        "Phone": _phoneController.text,
+        "Phone": phoneNumber,
         "Inquiry Details": _detailsController.text,
         "Inquiry Type": inquiryType,
-        "Image URL": imageUrl,
+        "Image URLs": imageUrls,
+        'id': FirebaseAuth.instance.currentUser?.uid,
       });
-      print("7");
+
+      setState(() {
+        _isLoading = false;
+      });
+
       showDialog(
         context: context,
         builder: (context) {
-          return SuccssfulSend();
+          return const SuccssfulSend();
         },
       );
-      print("8");
-    } else {
-      print("222222");
     }
   }
 
@@ -88,9 +96,28 @@ class _InquiriesState extends State<Inquiries> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        image1: 'assets/Menu.png',
+        widgett: Container(
+          width: 40,
+          height: 40,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
+              ),
+              color: Color.fromRGBO(255, 186, 0, 1),
+              boxShadow: [
+                BoxShadow(
+                    color: Color.fromRGBO(255, 186, 0, 0.24),
+                    offset: Offset(0, 4),
+                    blurRadius: 8,
+                    spreadRadius: 4),
+              ]),
+          child: const Icon(
+            Icons.keyboard_arrow_right_sharp,
+            size: 30,
+          ),
+        ),
         text: 'الإستفسارات',
-        image2: 'assets/HSE  LOGO.png',
+        image2: 'assets/hse.png',
       ),
       body: Stack(
         children: [
@@ -142,8 +169,86 @@ class _InquiriesState extends State<Inquiries> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    CustomPhoneItem(
-                      phonecontroller: _phoneController,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: _phoneController,
+                            keyboardType: TextInputType.phone,
+                            style: const TextStyle(
+                              fontFamily: 'Tajawal',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300,
+                              height: 2,
+                              color: Colors.black,
+                            ),
+                            decoration: InputDecoration(
+                              hintTextDirection: TextDirection.rtl,
+                              hintText: 'إكتب رقم جوالك',
+                              hintStyle: TextStyles.styleNormalgray14,
+                              isDense: true,
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 12),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: Color.fromRGBO(236, 236, 236, 1),
+                                  width: 1.0,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: Color.fromRGBO(236, 236, 236, 1),
+                                  width: 1.0,
+                                ),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: Colors.red,
+                                  width: 1.0,
+                                ),
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: Colors.red,
+                                  width: 1.0,
+                                ),
+                              ),
+                            ),
+                            validator: (number) {
+                              if (number == null || number.isEmpty) {
+                                return 'برجاء ادخال رقم الجوال';
+                              }
+                              if (number.length < 9 || number.length > 10) {
+                                return 'رقم الجوال يجب أن يكون 9 أو 10 أرقام';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          decoration: const BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(12)),
+                              color: Color.fromRGBO(245, 245, 245, 1)),
+                          child: CountryCodePicker(
+                            onChanged: (country) {
+                              setState(() {
+                                _selectedCountryCode = country.dialCode!;
+                              });
+                            },
+                            initialSelection: 'SA',
+                            favorite: const ['+966', 'SA'],
+                            showCountryOnly: false,
+                            showOnlyCountryWhenClosed: false,
+                            alignLeft: false,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 10),
                     const Align(
@@ -262,12 +367,20 @@ class _InquiriesState extends State<Inquiries> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    if (_image != null) ...[
-                      Image.file(
-                        _image!,
-                        width: 200,
-                        height: 200,
-                        fit: BoxFit.cover,
+                    if (_images != null && _images!.isNotEmpty) ...[
+                      Wrap(
+                        spacing: 8.0,
+                        runSpacing: 8.0,
+                        children: _images!.map((image) {
+                          return SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: Image.file(
+                              image,
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        }).toList(),
                       ),
                       const SizedBox(height: 10),
                     ],
@@ -276,7 +389,7 @@ class _InquiriesState extends State<Inquiries> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Text(
-                            'أضف صورة (إختيارى)',
+                            'أضف صور (إختيارى)',
                             style: TextStyles.styleBoldorange18,
                           ),
                           const SizedBox(width: 5),
@@ -284,19 +397,19 @@ class _InquiriesState extends State<Inquiries> {
                         ],
                       ),
                       color: const Color(0xFFFFF8E6),
-                      onPressed: _pickImage,
+                      onPressed: _pickImages,
                     ),
                     const SizedBox(height: 10),
-                    CustomTextButton(
-                      widget: const Text(
-                        'إرسال',
-                        style: TextStyles.styleBoldWhite18,
-                      ),
-                      color: const Color.fromRGBO(255, 186, 0, 1),
-                      onPressed: () {
-                        addInquiries();
-                      },
-                    ),
+                    _isLoading
+                        ? const CircularProgressIndicator()
+                        : CustomTextButton(
+                            widget: const Text(
+                              'إرسال',
+                              style: TextStyles.styleBoldWhite18,
+                            ),
+                            color: const Color.fromRGBO(255, 186, 0, 1),
+                            onPressed: addInquiries,
+                          ),
                     const SizedBox(height: 10),
                     const Row(
                       children: [

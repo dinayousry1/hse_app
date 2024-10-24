@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hse_app/utils/text_styles.dart';
+import 'package:hse_app/utiles/text_styles.dart';
 
 class BannerListview extends StatelessWidget {
   const BannerListview({super.key});
@@ -12,10 +12,10 @@ class BannerListview extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 12, top: 8, bottom: 8),
+            padding: const EdgeInsets.all(8),
             child: Container(
               height: 195,
-              width: 354,
+              width: 345,
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.all(Radius.circular(16)),
@@ -54,7 +54,7 @@ class BannerListview extends StatelessWidget {
                   ),
                   Positioned(
                     top: 35,
-                    left: 199.63,
+                    left: 193,
                     child: Image.asset(
                       'assets/gifts.png',
                       width: 137.12,
@@ -123,11 +123,10 @@ class BannerListview extends StatelessWidget {
             ),
           ),
           Padding(
-            padding:
-                const EdgeInsets.only(left: 12, top: 8, bottom: 8, right: 12),
+            padding: const EdgeInsets.all(8),
             child: Container(
               height: 195,
-              width: 354,
+              width: 345,
               decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.all(Radius.circular(16)),
